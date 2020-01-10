@@ -1,9 +1,21 @@
 const express = require('express');
 const path = require('path');
-const pug = require('pug');
+const mongoose = require('mongoose');
+const Article = require('./models/schema');
+
+//Initialising database
+mongoose.connect('mongodb://localhost:27017/NoExPro', {useNewUrlParser: true, useUnifiedTopology: true
+}).then( () => {
+  console.log("Connected to database NoExPro");
+}).catch( (err) => {
+  console.log(err);
+})
+let db = mongoose.connection;
+
 
 //Initialising app
 const app = express();
+
 
 //Initialising view engine
 app.set('views', path.join(__dirname, 'views'));
@@ -11,29 +23,17 @@ app.set('view engine', 'pug');
 
 //Home route
 app.get('/', (req, res) => {
-  let articles = [
-    {
-      id: 1,
-      name: "Article One",
-      author: "Amal",
-      body: "This is article one"
-    },
-    {
-      id: 2,
-      name: "Article Two",
-      author: "Jose",
-      body: "This is article two"
-    },
-    {
-      id: 3,
-      name: "Article Three",
-      author: "Amal",
-      body: "This is article three"
-    },
-  ]
-  res.render('index', {
-    title: 'Artitcles',
-    articles: articles
+  Article.find({}, (err, articles) => {
+    if(err) {
+      console.log(err);
+    }else {
+      res.render('index', {
+        title: 'Artitcles',
+        articles: articles
+      });
+      console.log(articles.name);
+      // console.log(articles);
+    }
   });
 });
 
