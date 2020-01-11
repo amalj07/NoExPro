@@ -44,14 +44,24 @@ app.get('/', (req, res) => {
   })
 });
 
+//Adding an article
 app.get('/articles/add', (req, res) => {
   res.render('add_article', {
     title: 'Add Artitcles'
   })
 });
 
+//fetching single article from db
+app.get('/articles/:id', (req, res) => {
+  Article.findById(req.params.id, (err, article) => {
+    res.render('article', {
+      article: article
+    });
+  });
+});
 
-//Route for submitting the article POST
+
+//Saving the article to db
 app.post('/articles/add', (req, res) => {
   let article = new Article();
   article.name = req.body.name;
