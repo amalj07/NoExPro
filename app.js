@@ -1,15 +1,16 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const Article = require('./models/schema');
 
 //Initialising database
 mongoose.connect('mongodb://localhost:27017/NoExPro', {useNewUrlParser: true, useUnifiedTopology: true
 }).then( () => {
   console.log("Connected to database NoExPro");
-}).catch( (err) => {
-  console.log(err);
-})
+}).catch( (error) => {
+  console.log(error);
+});
 let db = mongoose.connection;
 
 
@@ -21,30 +22,52 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+//Body Parser middleware
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+// parse application/json
+app.use(bodyParser.json())
+
+//Set public folder
+//serving static assests
+app.use(express.static(path.join(__dirname, 'public')));
+
 //Home route
 app.get('/', (req, res) => {
-  Article.find({}, (err, articles) => {
-    if(err) {
-      console.log(err);
-    }else {
-      res.render('index', {
-        title: 'Artitcles',
-        articles: articles
-      });
-      console.log(articles.name);
-      // console.log(articles);
-    }
-  });
+  Article.find({}).then( (articles) =>{
+    res.render('index', {
+      title: 'Artitcles',
+      articles: articles
+    });
+  }).catch( (err) => {
+    console.log(err);
+  })
 });
 
 app.get('/articles/add', (req, res) => {
   res.render('add_article', {
     title: 'Add Artitcles'
   })
+});
+
+
+//Route for submitting the article POST
+app.post('/articles/add', (req, res) => {
+  let article = new Article();
+  article.name = req.body.name;
+  article.author = req.body.author;
+  article.body = req.body.body;
+
+  article.save().then( () => {
+    res.redirect('/');
+  }).catch( (err) => {
+    console.log(err)
+  })
 })
+
 
 
 //Initialising server
 app.listen(5000, () => {
-  console.log("server listening to port: 3000");
+  console.log("server listening to port: 5000");
 });

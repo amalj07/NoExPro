@@ -2,3 +2,15 @@ extend layout
 
 block content
     h1 #{title}
+    
+    form(method='POST', action= '/articles/add')
+      #form-group
+        label name
+        input.form-control(name='name', type='text')
+      #form-group
+        label author
+        input.form-control(name='author', type='text')
+      #form-group
+        label name
+        textarea.form-control(name='body')
+      input.btn.btn-primary(type='submit', value='submit')
