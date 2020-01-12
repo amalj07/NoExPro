@@ -5,9 +5,11 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
 const expressValidator = require('express-validator');
+const passport = require('passport');
+const config = require('./config/database')
 
 //Initialising database
-mongoose.connect('mongodb://localhost:27017/NoExPro', {useNewUrlParser: true, useUnifiedTopology: true
+mongoose.connect(config.database, {useNewUrlParser: true, useUnifiedTopology: true
 }).then( () => {
   console.log("Connected to database NoExPro");
 }).catch( (error) => {
@@ -33,6 +35,9 @@ app.use(bodyParser.json())
 //Set public folder
 //serving static assests
 app.use(express.static(path.join(__dirname, 'public')));
+
+//Bring in article model
+const Article = require('./models/article');
 
 //Express session middleware
 app.use(session({
@@ -66,8 +71,16 @@ app.use(expressValidator({
   }
 }));
 
-//Bring in article model
-const Article = require('./models/article');
+//Passport config
+require('./config/passport')(passport);
+//Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.get('*', (req, res, next) => {
+  res.locals.user = req.user || null;
+  next();
+})
 
 //Home route
 app.get('/', (req, res) => {

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
 
 //Bring in user model
 const User = require('../models/user');
@@ -41,7 +42,7 @@ router.post('/register', (req, res) => {
     });
 
     newUser.save().then( () => {
-      req.flash('success', 'User registration success, Please login');
+      req.flash('success', 'User registration success, Please login!');
       res.redirect('/users/login');
     })
   }
@@ -51,5 +52,22 @@ router.post('/register', (req, res) => {
 router.get('/login', (req, res) => {
   res.render('login');
 })
+
+//Login process
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/users/login',
+    failureFlash: true
+  })(req, res, next);
+  req.flash('success', 'Logged in succesfully!');
+});
+
+//Logout
+router.get('/logout', (req, res) => {
+  req.logout();
+  req.flash('success', 'Logged out successfully!');
+  res.redirect('/users/login');
+});
 
 module.exports = router;
