@@ -2,7 +2,9 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const Article = require('./models/schema');
+const session = require('express-session');
+const flash = require('connect-flash');
+const expressValidator = require('express-validator');
 
 //Initialising database
 mongoose.connect('mongodb://localhost:27017/NoExPro', {useNewUrlParser: true, useUnifiedTopology: true
@@ -32,6 +34,41 @@ app.use(bodyParser.json())
 //serving static assests
 app.use(express.static(path.join(__dirname, 'public')));
 
+//Express session middleware
+app.use(session({
+  secret: 'keyboard cat',
+  resave: true,
+  saveUninitialized: true
+}));
+
+//Express message middleware
+app.use(require('connect-flash')());
+app.use( (req, res, next) => {
+  res.locals.messages = require('express-messages')(req, res);
+  next();
+});
+
+//Express validator middleware
+app.use(expressValidator({
+  errorFormatter: (param, msg, value) => {
+    var namespace = param.split('.')
+    , root = namespace.shift()
+    , formParam = root;
+
+    while(namespace.length){
+      formParam += '[' + namespace.shift() + ']';
+    }
+    return {
+      param: formParam,
+      msg: msg,
+      value: value
+    };
+  }
+}));
+
+//Bring in article model
+const Article = require('./models/schema');
+
 //Home route
 app.get('/', (req, res) => {
   Article.find({}).then( (articles) =>{
@@ -44,37 +81,9 @@ app.get('/', (req, res) => {
   })
 });
 
-//Adding an article
-app.get('/articles/add', (req, res) => {
-  res.render('add_article', {
-    title: 'Add Artitcles'
-  })
-});
-
-//fetching single article from db
-app.get('/articles/:id', (req, res) => {
-  Article.findById(req.params.id, (err, article) => {
-    res.render('article', {
-      article: article
-    });
-  });
-});
-
-
-//Saving the article to db
-app.post('/articles/add', (req, res) => {
-  let article = new Article();
-  article.name = req.body.name;
-  article.author = req.body.author;
-  article.body = req.body.body;
-
-  article.save().then( () => {
-    res.redirect('/');
-  }).catch( (err) => {
-    console.log(err)
-  })
-})
-
+//Route files
+let articles = require('./routes/articles');
+app.use('/articles', articles)
 
 
 //Initialising server

@@ -3,6 +3,7 @@ html
   head
     title NoExPro
     link(rel='stylesheet' href='/bower_components/bootstrap/dist/css/bootstrap.css')
+    link(rel='stylesheet' href='/css/style.css')
   body
     nav.navbar.navbar-expand-md.navbar-dark.bg-dark
       a.navbar-brand(href='/') NoExPro
@@ -20,6 +21,10 @@ html
           button.btn.btn-secondary.my-2.my-sm-0(type='submit') Search
 
     .container
+      != messages('message', locals)
+      if errors
+        each error, i in errors
+          div(class='alert alert-danger') #{error.msg}
       block content
       br
       hr
@@ -28,3 +33,4 @@ html
         
     script(src='/bower_components/jquery/dist/jquery.js')    
     script(src='/bower_components/bootstrap/dist/js/bootstrap.js')
+    script(src='/js/main.js') 
