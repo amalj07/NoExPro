@@ -67,7 +67,7 @@ app.use(expressValidator({
 }));
 
 //Bring in article model
-const Article = require('./models/schema');
+const Article = require('./models/article');
 
 //Home route
 app.get('/', (req, res) => {
@@ -82,8 +82,10 @@ app.get('/', (req, res) => {
 });
 
 //Route files
-let articles = require('./routes/articles');
+const articles = require('./routes/articles');
+const users = require('./routes/users');
 app.use('/articles', articles)
+app.use('/users', users)
 
 
 //Initialising server

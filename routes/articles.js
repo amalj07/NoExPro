@@ -23,7 +23,7 @@ router.get('/:id', (req, res) => {
 
 //Saving the article to db POST
 router.post('/add', (req, res) => {
-  req.checkBody('name', 'Name is required').notEmpty();
+  req.checkBody('title', 'Title is required').notEmpty();
   req.checkBody('author', 'Author is required').notEmpty();
   req.checkBody('body', 'Body is required').notEmpty();
 
@@ -36,7 +36,7 @@ router.post('/add', (req, res) => {
     });
   } else {
     let article = new Article();
-    article.name = req.body.name;
+    article.title = req.body.title;
     article.author = req.body.author;
     article.body = req.body.body;
 
@@ -64,7 +64,7 @@ router.get('/edit/:id', (req, res) => {
 //Updating the article
 router.post('/edit/:id', (req, res) => {
   let article = {};
-  article.name = req.body.name;
+  article.title = req.body.title;
   article.author = req.body.author;
   article.body = req.body.body;
 

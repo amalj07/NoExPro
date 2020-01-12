@@ -16,9 +16,11 @@ html
               span.sr-only (current)
           li.nav-item
             a.nav-link(href='/articles/add') Add Articles
-        form.form-inline.my-2.my-lg-0
-          input.form-control.mr-sm-2(type='text', placeholder='Search', aria-label='Search')
-          button.btn.btn-secondary.my-2.my-sm-0(type='submit') Search
+        ul.navbar-nav.navbar-right
+          li.nav-item.active
+            a.nav-link(href='/users/register') Registrer 
+          li.nav-item
+            a.nav-link(href='/users/login') Login
 
     .container
       != messages('message', locals)
