@@ -60,7 +60,6 @@ router.post('/login', (req, res, next) => {
     failureRedirect: '/users/login',
     failureFlash: true
   })(req, res, next);
-  req.flash('success', 'Logged in succesfully!');
 });
 
 //Logout

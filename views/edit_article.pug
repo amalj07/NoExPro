@@ -6,10 +6,10 @@ block content
     form(method='POST', action= '/articles/edit/'+article._id)
       #form-group
         label name
-        input.form-control(name='name', type='text', value= article.name)
+        input.form-control(name='title', type='text', value= article.title)
       #form-group
         label author
-        input.form-control(name='author', type='text', value= article.author)
+        input.form-control(name='author', type='text', value= user.name)
       #form-group
         label name
         textarea.form-control(name='body')= article.body
